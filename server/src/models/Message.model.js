@@ -12,4 +12,4 @@ const messageSchema = new Schema({
   Timestamp: { type: Date, default: Date.now },
 });
 
-export default mongoose.models("Message", messageSchema);
+export default mongoose.model("Message", messageSchema);

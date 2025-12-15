@@ -1,7 +1,6 @@
 import jwt from "jsonwebtoken";
 import User from "../models/User.model.js";
 import "dotenv/config";
-import { rearg } from "lodash";
 
 export const createAccessToken = (user) => {
   return jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: "15m" });

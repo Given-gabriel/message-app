@@ -1,6 +1,6 @@
 import { Router } from "express";
-import { sendMessage } from "../controllers/Message.controller";
-import { isProtected } from "../middlewares/auth.middleware";
+import { sendMessage } from "../controllers/Message.controller.js";
+import { isProtected } from "../middlewares/auth.middleware.js";
 
 const router = Router();
 
