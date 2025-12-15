@@ -1,9 +1,10 @@
 import { Router } from "express";
-import { sendMessage } from "../controllers/Message.controller.js";
+import { getChatList, sendMessage } from "../controllers/Message.controller.js";
 import { isProtected } from "../middlewares/auth.middleware.js";
 
 const router = Router();
 
 router.post("/:receiverId", isProtected, sendMessage);
+router.get("/chatlist", isProtected, getChatList);
 
 export default router;
