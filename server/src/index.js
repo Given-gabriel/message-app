@@ -23,6 +23,8 @@ connectDB();
 
 let onlineUsers = new Map();
 
+io.use(socketAuthMiddleware);
+
 io.on("connection", (socket) => {
   console.log("User connected:", socket.id);
 
@@ -55,11 +57,9 @@ app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-io.use(socketAuthMiddleware);
-
 app.use("/api/auth", auth);
 app.use("/api/chatwith", chat);
 
-app.listen(PORT, () => {
-  console.log(`WebSocket server is listening on port ${PORT}`);
+server.listen(PORT, () => {
+  console.log(`Server is listening on port ${PORT}`);
 });

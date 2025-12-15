@@ -29,20 +29,22 @@ export const isProtected = async (req, res, next) => {
     try {
       token = req.headers.authorization.split(" ")[1];
 
-      //verify token
-      const decoded = jwt.verify(token, processenv.ACCESS_TOKEN_SECRET);
+      // verify token
+      const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
 
       req.user = await User.findById(decoded.id).select("-password");
 
       if (!req.user) {
-        return rearg.status(401).json({ message: "User not found" });
+        return res.status(401).json({ message: "User not found" });
       }
-      next();
+
+      return next();
     } catch (err) {
       console.error("Token verification failed", err);
       return res.status(401).json({ message: "Not authorized, token failed" });
     }
   }
+  return res.status(401).json({ message: "Not authorized, no token" });
 };
 //simple socket authentication middleware
 export const socketAuthMiddleware = (socket, next) => {
