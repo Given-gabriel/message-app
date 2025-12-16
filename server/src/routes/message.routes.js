@@ -5,6 +5,6 @@ import { isProtected } from "../middlewares/auth.middleware.js";
 const router = Router();
 
 router.post("/:receiverId", isProtected, sendMessage);
-router.get("/chatlist", isProtected, getChatList);
+router.get("/", isProtected, getChatList);
 
 export default router;

@@ -1,4 +1,6 @@
+import mongoose from "mongoose";
 import Message from "../models/Message.model.js";
+import User from "../models/User.model.js";
 
 ////////////send message ///////////////
 export const sendMessage = async (req, res) => {
@@ -21,11 +23,28 @@ export const sendMessage = async (req, res) => {
 
 /////////////get chat list ///////////////
 export const getChatList = async (req, res) => {
-  const sentTo = await Message.distinct("receiverId", {senderId: userId});
+  try {
+    const userId = new mongoose.Types.ObjectId(req.user.id);
 
-  const receivedFrom = await Message.distinct("senderId", {receiverId: userId});
+    //users I sent messages to
+    const sentTo = await Message.distinct("receiver", { sender: userId });
 
-  const chatList = Array.from(new Set([...sentTo, ...receivedFrom]));
+    //users I received messages from
+    const receivedFrom = await Message.distinct("sender", { receiver: userId });
 
-  res.status(200).json(chatList);
-}
+    const chatUserIds = [...new Set([...sentTo, ...receivedFrom])].filter(
+      (id) => id.toString() !== userId.toString()
+    );
+
+    //fetch user details
+    const users = await User.find(
+      { _id: { $in: chatUserIds } },
+      { username: 1 } //only return username
+    );
+
+    res.status(200).json(users);
+  } catch (err) {
+    console.error("getchatlist error:", err);
+    res.status(500).json({ message: "Server error", error: err.message });
+  }
+};
