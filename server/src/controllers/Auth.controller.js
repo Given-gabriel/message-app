@@ -1,5 +1,5 @@
 import User from "../models/User.model.js";
-import bcrypt from "bcryptjs";
+import bcrypt from "bcrypt";
 import { createAccessToken, createRefreshToken } from "../middlewares/auth.middleware.js";
 
 ///////////user registration ///////////////
@@ -23,7 +23,7 @@ export const register = async (req, res) => {
 
     res.status(201).json({ message: "User registered successfully" });
   } catch (err) {
-    res.status(500).json({ message: "Server error" }, err);
+    res.status(500).json({ message: "Server error", error: err.message });
     console.log(err);
   }
 };
@@ -41,11 +41,10 @@ export const login = async (req, res) => {
         .json({ message: "User does not exist, please register" });
 
     //compare passwords
-    bcrypt.compare(password, existingUser.password, (err, isMatch) => {
-      if (err) throw err;
-      if (!isMatch)
-        return res.status(400).json({ message: "Invalid password" });
-    });
+    const isMatch = await bcrypt.compare(password, existingUser.password);
+    if (!isMatch) return res.status(400).json({ message: "Invalid credentials" });
+
+    //create tokens
 
     const accessToken = createAccessToken({ id: existingUser._id });
     const refreshToken = createRefreshToken({ id: existingUser._id });
